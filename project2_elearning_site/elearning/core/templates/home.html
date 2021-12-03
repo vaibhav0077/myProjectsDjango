@@ -1,0 +1,58 @@
+{% extends 'master.html' %}
+{% load customfilter %}
+
+{% block content %}
+<style>
+    .price {
+        font-size: 20px;
+    }
+</style>
+<div class="conatiner-fluid">
+    <br>
+    {{request.user}}
+    <div class="row">
+        
+        {% for course in courses %}
+        <div class="col mx-auto">
+            <div class="card mx-auto" style="width: 18rem;">
+                <img src="{{course.thumbnail.url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course }}</h5>
+                    <p class="card-text">{{ course.description}}</p>
+                    
+                </div>
+                {% if request.user.is_authenticated and course|is_enrolled %}
+                <b>Enrolled</b>
+                <div class="card-footer p-0">
+                    <div class='row no-gutters'>
+                        <div class='col '><a href="/course/{{course.slug}}" class='btn btn-light btn-block'>Start Course</a></div>
+                    </div>
+                </div>
+                
+                {% else %}
+                <p class="card-text">
+                    <span>Save {{ course.discount }}%</span>
+                    <br>
+                    <span class='price'><del>{{ course.price|rupee }}</del> &nbsp;
+                        <span> {% cal_sellprice course.price course.discount as value %}{{value|rupee}} </span>
+                    </span>
+
+                </p>
+
+                <div class="card-footer p-0">
+                    <div class='row no-gutters'>
+                        <div class='col border-right'><a href="/checkout/{{course.slug}}" class='btn btn-light btn-block'>Enroll Now</a></div>
+                        <div class='col border'><a href="/course/{{course.slug}}" class='btn btn-light btn-block'>Show More</a></div>
+                    </div>
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

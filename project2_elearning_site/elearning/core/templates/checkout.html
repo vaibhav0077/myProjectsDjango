@@ -1,0 +1,98 @@
+{% extends 'master.html' %}
+{% load customfilter %}
+
+{% block content %}
+
+<div class='container'>
+    <br>
+
+
+    <h1 class="display-4 alert border text-center">Checkout Page</h1>
+    <hr>
+    <h1>You are going to Enroll {{ course.name}}</h1>
+    <hr>
+    <div class='row'>
+        <div class="mx-auto">
+            <div class="card mx-auto" style="width: 18rem;">
+                <img src="{{course.thumbnail.url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course }}</h5>
+                    <p class="card-text">{{ course.description}}</p>
+                    <p class="card-text">
+                        <span>Save {{ course.discount }}%</span>
+                        <br>
+                        <span class='price'><del>{{ course.price|rupee }}</del> &nbsp;
+                            <span> {% cal_sellprice course.price course.discount as value %}{{value|rupee}} </span>
+                        </span>
+
+                    </p>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class='col'>
+            <div class=" mx-auto">
+                <p class='display-3 '>{{ course.name}}</p>
+                <hr>
+                <p class='display-4 '>Payable Amount : <b>{% cal_sellprice course.price course.discount as value%}{{value|rupee}}</b></p>
+
+                <a href="?action=create_payment" class="btn btn-dark">Continue To Payment</a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+    </div>
+</div>
+
+
+{% if order is not None %}
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "rzp_test_7EhDtdvXqmeZOJ", // Enter the Key ID generated from the Dashboard
+        "name": "Vaibhav Industries",
+        "description": "Payment for {{course.name}}",
+        "image": "https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/w_596,c_limit,q_auto:best,f_auto/fc/3034007-inline-i-applelogo.jpg", // logo
+        "order_id": "{{order.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 2
+        "callback_url": "http://localhost:8000/verify_payment",
+       //"handler": function (response) {
+       //    alert(response.razorpay_payment_id);
+       //    alert(response.razorpay_order_id);
+       //    alert(response.razorpay_signature)
+       //},
+        "prefill": {
+            "name": "{{user.first_name}}",
+            "email": "{{user.email}}",
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+</script>
+
+
+
+
+
+
+
+{% endif %}
+
+
+{% if error is not None %}
+<script>
+    window.onload = () =>{ alert('{{error}}') }
+    
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+{% load customfilter %}
+
+{% block content %}
+<style>
+    .price {
+        font-size: 20px;
+    }
+</style>
+<div class="conatiner-fluid">
+    <br>
+    {% if request.user.is_authenticated %}
+    {% if user_course|length == 0 %}
+    <h1>yet not buy anything</h1>
+    {% else %}
+    <div class="row">
+
+        {% for course in user_course %}
+        <div class="col mx-auto">
+            <div class="card mx-auto" style="width: 18rem;">
+                <img src="{{course.course.thumbnail.url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.course.name }}</h5>
+                    <p class="card-text">{{ course.course.description}}</p>
+
+                </div>
+
+
+                <div class="card-footer p-0">
+                    <div class='row no-gutters'>
+                        <div class='col '><a href="/course/{{course.course.slug}}" class='btn btn-light btn-block'>Start
+                                Course</a></div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        {% endfor %}
+
+        
+
+
+    </div>
+    {% else %}
+        <h1>User Is not Authenticated</h1>
+    {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}
